@@ -1,0 +1,29 @@
+version: "3.9"
+
+services:
+  web:
+    build: .
+    command: ["./wait-for-it.sh", "db:5432", "--", "python", "main.py", "runserver"]
+    volumes:
+      - .:/app
+    ports:
+      - "80:5000"
+    depends_on:
+      - db
+    environment:
+      - DB_HOST=db
+      - DB_PORT=5432
+      - DB_NAME=shortener
+      - DB_USER=short
+      - DB_PASSWORD=secret
+      - FLASK_ENV=Development
+      - FLASK_DEBUG=1
+      - APP_HOST=localhost
+  db:
+    image: postgres
+    ports:
+      - "54321:5432"
+    environment:
+      - POSTGRES_DB=shortener
+      - POSTGRES_USER=short
+      - POSTGRES_PASSWORD=secret
